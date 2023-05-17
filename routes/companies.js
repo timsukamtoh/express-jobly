@@ -52,8 +52,17 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
  */
 
 router.get("/", async function (req, res, next) {
+  //TODO: how to validate ints in query strings
+  const parsedQuery = {}
+  Object.entries(req.query).forEach(([key, value]) => {
+    const parsedValue = parseInt(value);
+    if (!isNaN(parsedValue)) {
+      parsedQuery[key] = parsedValue;
+    }
+  });
+
   const validator = jsonschema.validate(
-    req.query,
+    parsedQuery,
     companyGetSchema,
     {required: true}
   );
@@ -61,8 +70,8 @@ router.get("/", async function (req, res, next) {
     const errs = validator.errors.map(e => e.stack);
     throw new BadRequestError(errs);
   }
+
   const companies = await Company.findAll(req.query);
-  
   return res.json({ companies });
 });
 

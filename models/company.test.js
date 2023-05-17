@@ -85,7 +85,59 @@ describe("findAll", function () {
       },
     ]);
   });
+
+  test("works: with nameLike filter", async function () {
+    const search = {nameLike:"1"}
+    let companies = await Company.findAll(search);
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      }
+    ]);
+  });
+
+  test("works: with minEmployees filter", async function () {
+    const search = {minEmployees:2}
+    let companies = await Company.findAll(search);
+    expect(companies).toEqual([
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      },
+      {
+        handle: "c3",
+        name: "C3",
+        description: "Desc3",
+        numEmployees: 3,
+        logoUrl: "http://c3.img",
+      }
+    ]);
+  });
+
+  test("fails: with bad inputs", async function () {
+    const search = {minEmployees:2, maxEmployees:1 }
+    let companies;
+    try {
+      companies = await Company.findAll(search);
+    } catch (err) {
+      expect(err.message).toEqual("Minimum must be less than maximum");
+    }
+
+    await expect(async ()=> {
+      await Company.findAll(search);
+    }).rejects.toThrow(BadRequestError);
+  });
+
 });
+
+
 
 /************************************** get */
 
