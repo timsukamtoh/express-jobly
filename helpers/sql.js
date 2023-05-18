@@ -19,8 +19,8 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   );
 
   return {
-    setCols: cols.join(", "),
-    values: Object.values(dataToUpdate),
+    setCols: cols.join(", "), //`"first_name"=$1, "last_name"=$2, "email"=$3`
+    values: Object.values(dataToUpdate),//"NewF", "NewF", "new@email.com"
   };
 }
 

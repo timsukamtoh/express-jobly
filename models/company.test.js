@@ -130,10 +130,10 @@ describe("findAll", function () {
       expect(err.message).toEqual("Minimum must be less than maximum");
     }
 
-    await expect(async ()=> {
+     expect(async function (){
       await Company.findAll(search);
     }).rejects.toThrow(BadRequestError);
-  });
+  }); //TODO: remember this 
 
 });
 

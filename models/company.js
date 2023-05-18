@@ -55,10 +55,11 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(search = {}) {
+  static async findAll(search = {}) { //TODO: add a helper func
     const searchFilters = [];
     const params = [];
 
+    // Throw error if minEmployees is greater than maxEmployees
     if (search.minEmployees &&
       search.maxEmployees &&
       search.minEmployees > search.maxEmployees) {

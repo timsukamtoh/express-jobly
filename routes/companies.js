@@ -55,7 +55,7 @@ router.get("/", async function (req, res, next) {
   //TODO: how to validate ints in query strings
   const parsedQuery = {}
   Object.entries(req.query).forEach(([key, value]) => {
-    const parsedValue = parseInt(value);
+    const parsedValue = parseInt(value);// Number()
     if (!isNaN(parsedValue)) {
       parsedQuery[key] = parsedValue;
     }
@@ -71,7 +71,7 @@ router.get("/", async function (req, res, next) {
     throw new BadRequestError(errs);
   }
 
-  const companies = await Company.findAll(req.query);
+  const companies = await Company.findAll(parsedQuery);//TODO: parsed query
   return res.json({ companies });
 });
 
@@ -86,6 +86,7 @@ router.get("/", async function (req, res, next) {
 router.get("/:handle", async function (req, res, next) {
   const company = await Company.get(req.params.handle);
   return res.json({ company });
+  
 });
 
 /** PATCH /[handle] { fld1, fld2, ... } => { company }

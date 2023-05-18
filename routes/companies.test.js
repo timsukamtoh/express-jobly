@@ -1,6 +1,7 @@
 "use strict";
 
 const request = require("supertest");
+const { BadRequestError } = require("../expressError");
 
 const db = require("../db");
 const app = require("../app");
@@ -95,7 +96,84 @@ describe("GET /companies", function () {
           ],
     });
   });
-});
+
+  test ("call test with filtering", async function(){
+    const resp = await request(app).get(`/companies?nameLike=i`);
+    expect(resp.body).toEqual(
+      {
+        companies: []
+
+      }
+    )
+
+  })
+
+  test ("call test with filtering minEmployees=1", async function(){
+    const resp = await request(app).get("/companies?minEmployees=1");
+    expect(resp.body).toEqual({
+      companies:
+          [
+            {
+              handle: "c1",
+              name: "C1",
+              description: "Desc1",
+              numEmployees: 1,
+              logoUrl: "http://c1.img",
+            },
+            {
+              handle: "c2",
+              name: "C2",
+              description: "Desc2",
+              numEmployees: 2,
+              logoUrl: "http://c2.img",
+            },
+            {
+              handle: "c3",
+              name: "C3",
+              description: "Desc3",
+              numEmployees: 3,
+              logoUrl: "http://c3.img",
+            },
+          ],
+    });
+  })
+
+  test (`call test with filtering maxEmployees=1`, async function(){
+    const resp = await request(app).get(`/companies?maxEmployees=1`);
+    expect(resp.body).toEqual(
+      {
+        companies: [{
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+        }]
+      }
+    )
+  })
+
+  test ("fail test with filtering minEmployees=-1", async function(){
+
+    let resp;
+    try {
+      resp = await request(app).get(`/companies?minEmployees=-1`);
+    } catch (err) {
+      expect(err.message).toEqual("instance.minEmployees must be greater than or equal to 0");
+    }
+
+     expect(async () => {
+      await expect(request(app).get('/companies?minEmployees=-1')).rejects.toThrow(BadRequestError);
+    }).rejects.toThrow();
+
+  });
+
+  });
+
+
+
+
+
 
 /************************************** GET /companies/:handle */
 
