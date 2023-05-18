@@ -84,6 +84,7 @@ describe("POST /users", function () {
       });
     expect(resp.statusCode).toEqual(401);
   });
+
   test("unauth for non-admin", async function () {
     const resp = await request(app)
       .post("/users")
@@ -158,6 +159,7 @@ describe("GET /users", function () {
       ],
     });
   });
+  
   test("does not work for non-admin users", async function () {
     const resp = await request(app)
       .get("/users")

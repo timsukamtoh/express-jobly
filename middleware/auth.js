@@ -21,7 +21,9 @@ function authenticateJWT(req, res, next) {
     const token = authHeader.replace(/^[Bb]earer /, "").trim();
 
     try {
+
       res.locals.user = jwt.verify(token, SECRET_KEY);
+      console.log("authenticate res.locals.user=",res.locals.user)
     } catch (err) {
       /* ignore invalid tokens (but don't store user!) */
     }
@@ -45,6 +47,7 @@ function ensureLoggedIn(req, res, next) {
  * If not, throws Unauthorized Error.
  */
 function ensureIsAdmin(req, res, next) {
+  console.log("res.locals.user=", res.locals.user);
   if (res.locals.user && res.locals.user?.isAdmin === true) return next();
   throw new UnauthorizedError();
 }
@@ -55,7 +58,7 @@ function ensureIsAdmin(req, res, next) {
  * If not, throws Unauthorized Error.
  */
 function ensureIsAdminOrCurrentUser(req, res, next) {
-  if(res.locals.user) {
+  if (res.locals.user) {
     if (res.locals.user?.isAdmin === true) return next();
     if (res.locals.user?.username === req.params?.username) return next();
   }
