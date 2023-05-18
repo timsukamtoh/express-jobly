@@ -160,7 +160,7 @@ describe("update", function () {
     firstName: "NewF",
     lastName: "NewF",
     email: "new@email.com",
-    isAdmin: true,
+    isAdmin: false,
   };
 
   test("works", async function () {
