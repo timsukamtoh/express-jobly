@@ -17,27 +17,13 @@
       },
 
       "minEmployees": {
-        "anyOf": [
-          {
-            "type": "integer",
-            "minimum": 1
-          },
-          {
-            "type": "string"
-          }
-        ]
+        "type": "integer",
+        "minimum": 1
       },
 
       "maxEmployees": {
-        "anyOf": [
-          {
-            "type": "integer",
-            "minimum": 1
-          },
-          {
-            "type": "string"
-          }
-        ]
+        "type": "integer",
+        "minimum": 1
       }
 
     },

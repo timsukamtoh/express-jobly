@@ -158,11 +158,10 @@ describe("GET /users", function () {
       ],
     });
   });
-  test("does not works for non-admin users", async function () {
+  test("does not work for non-admin users", async function () {
     const resp = await request(app)
       .get("/users")
       .set("authorization", `Bearer ${u2Token}`);
-
     expect(resp.statusCode).toEqual(401);
   });
 
@@ -190,6 +189,22 @@ describe("GET /users/:username", function () {
       },
     });
   });
+
+  test("works for admin-users on another user route", async function () {
+    const resp = await request(app)
+      .get(`/users/u2`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({
+      user: {
+        username: "u2",
+        firstName: "U2F",
+        lastName: "U2L",
+        email: "user2@user.com",
+        isAdmin: false,
+      },
+    });
+  });
+
   test("works for non-admin user for their own route", async function () {
     const resp = await request(app)
       .get(`/users/u2`)
@@ -204,6 +219,19 @@ describe("GET /users/:username", function () {
       }
     });
     expect(resp.statusCode).toEqual(200);
+  });
+
+  test("unauth for anon", async function () {
+    const resp = await request(app)
+      .get(`/users/u1`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for non-admin user on another route", async function () {
+    const resp = await request(app)
+      .get(`/users/u1`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.statusCode).toEqual(401);
   });
 
   test("unauth for anon", async function () {
@@ -240,6 +268,25 @@ describe("PATCH /users/:username", () => {
       },
     });
   });
+
+  test("works for admin-users on another user's route", async function () {
+    const resp = await request(app)
+      .patch(`/users/u3`)
+      .send({
+        firstName: "New",
+      })
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({
+      user: {
+        username: "u3",
+        firstName: "New",
+        lastName: "U3L",
+        email: "user3@user.com",
+        isAdmin: false,
+      },
+    });
+  });
+
   test("works for non-admin user on their own route", async function () {
     const resp = await request(app)
       .patch(`/users/u2`)
@@ -260,6 +307,7 @@ describe("PATCH /users/:username", () => {
     }
     );
   });
+
   test("unauth for anon", async function () {
     const resp = await request(app)
       .patch(`/users/u1`)
@@ -268,6 +316,7 @@ describe("PATCH /users/:username", () => {
       });
     expect(resp.statusCode).toEqual(401);
   });
+
   test("unauth for non-admin and not their own route", async function () {
     const resp = await request(app)
       .patch("/users/u1")
@@ -325,16 +374,37 @@ describe("PATCH /users/:username", () => {
 /************************************** DELETE /users/:username */
 
 describe("DELETE /users/:username", function () {
-  test("works for users", async function () {
+  test("works for admin users", async function () {
     const resp = await request(app)
       .delete(`/users/u1`)
       .set("authorization", `Bearer ${u1Token}`);
     expect(resp.body).toEqual({ deleted: "u1" });
   });
 
+  test("works for admin users on another user's route", async function () {
+    const resp = await request(app)
+      .delete(`/users/u3`)
+      .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.body).toEqual({ deleted: "u3" });
+  });
+
+  test("works for non-admin users on their own route", async function () {
+    const resp = await request(app)
+      .delete(`/users/u2`)
+      .set("authorization", `Bearer ${u2Token}`);
+    expect(resp.body).toEqual({ deleted: "u2" });
+  });
+
   test("unauth for anon", async function () {
     const resp = await request(app)
       .delete(`/users/u1`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("unauth for non-admin user on another user's route", async function () {
+    const resp = await request(app)
+      .delete(`/users/u1`)
+      .set("authorization", `Bearer ${u2Token}`);
     expect(resp.statusCode).toEqual(401);
   });
 

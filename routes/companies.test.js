@@ -147,8 +147,31 @@ describe("GET /companies", function () {
     });
   })
 
-  test (`call test with filtering maxEmployees=1`, async function(){
-    const resp = await request(app).get(`/companies?maxEmployees=1`);
+  test (`call test with filtering maxEmployees=2`, async function(){
+    const resp = await request(app).get(`/companies?maxEmployees=2`);
+    expect(resp.body).toEqual(
+      {
+        companies: [{
+            handle: "c1",
+            name: "C1",
+            description: "Desc1",
+            numEmployees: 1,
+            logoUrl: "http://c1.img",
+        },
+        {
+          handle: "c2",
+          name: "C2",
+          description: "Desc2",
+          numEmployees: 2,
+          logoUrl: "http://c2.img",
+        },
+      ]
+      }
+    )
+  })
+
+  test (`call test with multiple filtering maxEmployees=2 and nameLike=1`, async function(){
+    const resp = await request(app).get(`/companies?nameLike=1&maxEmployees=2`);
     expect(resp.body).toEqual(
       {
         companies: [{
@@ -249,7 +272,7 @@ describe("PATCH /companies/:handle", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
-  test("fails for non-admin users", async function () {
+  test("unauth for non-admin users", async function () {
     const resp = await request(app)
         .patch(`/companies/c1`)
         .send({

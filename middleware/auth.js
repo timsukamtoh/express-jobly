@@ -36,7 +36,7 @@ function authenticateJWT(req, res, next) {
  */
 
 function ensureLoggedIn(req, res, next) {
-  if (res.locals.user?.username) return next();
+  if (res.locals.user && res.locals.user?.username) return next();
   throw new UnauthorizedError();
 }
 
@@ -45,18 +45,20 @@ function ensureLoggedIn(req, res, next) {
  * If not, throws Unauthorized Error.
  */
 function ensureIsAdmin(req, res, next) {
-  if (res.locals.user?.isAdmin) return next();
+  if (res.locals.user && res.locals.user?.isAdmin === true) return next();
   throw new UnauthorizedError();
 }
 
 /** Middleware to use to check if user is an Admin
- * or the user that the route is sent to
+ * or the logged user is sent to their own route
  *
  * If not, throws Unauthorized Error.
  */
 function ensureIsAdminOrCurrentUser(req, res, next) {
-  if (res.locals.user?.isAdmin) return next();
-  if (res.locals.user?.username === req.params?.username) return next();
+  if(res.locals.user) {
+    if (res.locals.user?.isAdmin === true) return next();
+    if (res.locals.user?.username === req.params?.username) return next();
+  }
   throw new UnauthorizedError();
 }
 

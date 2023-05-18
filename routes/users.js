@@ -26,10 +26,10 @@ const router = express.Router();
  * This returns the newly created user and an authentication token for them:
  *  {user: { username, firstName, lastName, email, isAdmin }, token }
  *
- * Authorization required: login
+ * Authorization required: login and isAdmin === true
  **/
 
-router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
+router.post("/", ensureIsAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
       req.body,
       userNewSchema,
@@ -50,10 +50,10 @@ router.post("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) 
  *
  * Returns list of all users.
  *
- * Authorization required: login
+ * Authorization required: login and isAdmin === true
  **/
 
-router.get("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
+router.get("/", ensureIsAdmin, async function (req, res, next) {
   const users = await User.findAll();
   return res.json({ users });
 });
@@ -63,10 +63,10 @@ router.get("/", ensureLoggedIn, ensureIsAdmin, async function (req, res, next) {
  *
  * Returns { username, firstName, lastName, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: login And (isAdmin === true Or is user's own route)
  **/
 
-router.get("/:username", ensureLoggedIn, ensureIsAdminOrCurrentUser, async function (req, res, next) {
+router.get("/:username", ensureIsAdminOrCurrentUser, async function (req, res, next) {
   const user = await User.get(req.params.username);
   return res.json({ user });
 });
@@ -79,10 +79,10 @@ router.get("/:username", ensureLoggedIn, ensureIsAdminOrCurrentUser, async funct
  *
  * Returns { username, firstName, lastName, email, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: login And (isAdmin === true Or is user's own route)
  **/
 
-router.patch("/:username", ensureLoggedIn, ensureIsAdminOrCurrentUser, async function (req, res, next) {
+router.patch("/:username", ensureIsAdminOrCurrentUser, async function (req, res, next) {
   const validator = jsonschema.validate(
       req.body,
       userUpdateSchema,
@@ -100,10 +100,10 @@ router.patch("/:username", ensureLoggedIn, ensureIsAdminOrCurrentUser, async fun
 
 /** DELETE /[username]  =>  { deleted: username }
  *
- * Authorization required: login
+ * Authorization required: login And (isAdmin === true Or is user's own route)
  **/
 
-router.delete("/:username", ensureLoggedIn, ensureIsAdminOrCurrentUser, async function (req, res, next) {
+router.delete("/:username", ensureIsAdminOrCurrentUser, async function (req, res, next) {
   await User.remove(req.params.username);
   return res.json({ deleted: req.params.username });
 });
