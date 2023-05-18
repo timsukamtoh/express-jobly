@@ -4,19 +4,40 @@
     "type": "object",
     "properties": {
       "nameLike": {
-        "type": "string",
-        "minLength": 1,
-        "maxLength": 30
+        "anyOf": [
+          {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 30
+          },
+          {
+            "type": "integer"
+          }
+        ]
       },
 
       "minEmployees": {
-        "type": "integer",
-        "minimum": 0 
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string"
+          }
+        ]
       },
 
       "maxEmployees": {
-        "type": "integer",
-        "minimum": 0
+        "anyOf": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "string"
+          }
+        ]
       }
 
     },

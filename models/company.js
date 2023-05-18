@@ -2,7 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
-const { sqlForPartialUpdate } = require("../helpers/sql");
+const { sqlForPartialUpdate, buildString } = require("../helpers/sql");
 
 /** Related functions for companies. */
 
@@ -55,7 +55,7 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(search = {}) { //TODO: add a helper func
+  static async findAll(search = {}) { 
     const searchFilters = [];
     const params = [];
 
@@ -83,7 +83,7 @@ class Company {
     }
 
     //Creates the String for the WHERE clause
-    const filterString = searchFilters.length > 0 ? `WHERE ${searchFilters.join(' AND ')}` : '';
+    const filterString = buildString(searchFilters);
 
     const companiesRes = await db.query(
       `SELECT handle,

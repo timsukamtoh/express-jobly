@@ -24,4 +24,14 @@ function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   };
 }
 
-module.exports = { sqlForPartialUpdate };
+/**
+ * Helper function takes in an array of conditionals to be used in building a SQL
+ * WHERE clause if the array.length > 0
+ * @param {Array} searchFilters array of sql conditionals
+ * @returns the joined string
+ */
+function buildString(searchFilters){
+  return searchFilters.length > 0 ? `WHERE ${searchFilters.join(' AND ')}` : '';
+}
+
+module.exports = { sqlForPartialUpdate, buildString };
