@@ -59,27 +59,22 @@ class Job {
     const searchFilters = [];
     const params = [];
 
-    // Throw error if minEmployees is greater than maxEmployees
-    if (search.minEmployees &&
-      search.maxEmployees &&
-      search.minEmployees > search.maxEmployees) {
-      throw new BadRequestError("Minimum must be less than maximum");
-    }
+  
 
     /**For each property, if they exist, push them into search filters and params */
-    if (search.nameLike) {
-      searchFilters.push(`name ILIKE $${params.length + 1}`);
-      params.push(`%${search.nameLike}%`);
+    if (search.title) {
+      searchFilters.push(`title ILIKE $${params.length + 1}`);
+      params.push(`%${search.title}%`);
     }
 
-    if (search.minEmployees) {
-      searchFilters.push(`num_employees >= $${params.length + 1}`);
-      params.push(search.minEmployees);
+    if (search.minSalary) {
+      searchFilters.push(`salary >= $${params.length + 1}`);
+      params.push(search.minSalary);
     }
 
-    if (search.maxEmployees) {
-      searchFilters.push(`num_employees <= $${params.length + 1}`);
-      params.push(search.maxEmployees);
+    if (search.hasEquity) {
+      searchFilters.push(`equity >= $${params.length + 1}`);
+      params.push(0);
     }
 
     //Creates the String for the WHERE clause

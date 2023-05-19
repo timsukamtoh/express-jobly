@@ -55,7 +55,7 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(search = {}) { 
+  static async findAll(search = {}) {
     const searchFilters = [];
     const params = [];
 
@@ -110,20 +110,45 @@ class Company {
 
   static async get(handle) {
     const companyRes = await db.query(`
-        SELECT handle,
-               name,
-               description,
-               num_employees AS "numEmployees",
-               logo_url      AS "logoUrl"
-        FROM companies
-        WHERE handle = $1`, [handle]);
+    SELECT companies.handle,
+            companies.name,
+            companies.description,
+            companies.num_employees,
+            companies.logo_url AS "logoUrl"
+            jobs.id,
+            jobs.title,
+            jobs.salary,
+            jobs.equity
+    FROM companies
+    JOIN jobs
+    ON jobs.company_handle = companies.handle
+    WHERE companies.handle = $1`, [handle]);
 
-    const company = companyRes.rows[0];
+    
 
-    if (!company) throw new NotFoundError(`No company: ${handle}`);
+    const companies = companyRes.rows;
 
-    return company;
-  }
+    if (!companies) throw new NotFoundError(`No company: ${handle}`);
+
+    return companies.map(c => ({
+      handle: c.handle,
+      name: c.name,
+      description: c.description,
+      numEmployees: c.numEmployees,
+      logoUrl: c.logoUrl,
+      jobs: [{
+        id: id,
+        title: c.title,
+        salary: c.salary,
+        equity: c.equity
+      }]
+    }));
+
+
+  };
+
+
+
 
   /** Update company data with `data`.
    *

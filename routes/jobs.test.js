@@ -75,6 +75,126 @@ describe("POST /jobs", function () {
     expect(resp.statusCode).toEqual(400);
   });
 });
+/************************************** GET /job */
+describe("GET /jobs", function () {
+  test("ok for anon", async function () {
+    const resp = await request(app).get("/jobs");
+    expect(resp.body).toEqual({
+      jobs:
+        [
+          {
+            id: 1,
+            title: "job1",
+            salary: 100000,
+            equity: "0",
+            companyHandle: "c1",
+          },
+          {
+            id: 2,
+            title: "job2",
+            salary: 200000,
+            equity: "0",
+              companyHandle: "c2",
+          },
+          {
+            id: 3,
+            title: "job3",
+            salary: 300000,
+            equity: "0.5",
+            companyHandle: "c3",
+          },
+        ],
+    });
+  });
+
+  test ("call test with filtering", async function(){
+    const resp = await request(app).get(`/jobs?title=1`);
+    expect(resp.body).toEqual(
+      {
+        jobs: [
+          {
+            id: 1,
+            title: "job1",
+            salary: 100000,
+            equity: "0",
+            companyHandle: "c1",
+          },
+        ]
+      }
+    )
+
+  })
+  test ("call test with filtering minSalary > 100001", async function(){
+    const resp = await request(app).get("/jobs?minSalary=100001");
+    expect(resp.body).toEqual({
+     jobs:
+          [
+            {
+              id: 2,
+              title: "job2",
+              salary: 200000,
+              equity: "0",
+                companyHandle: "c2",
+            },
+            {
+              id: 3,
+              title: "job3",
+              salary: 300000,
+              equity: "0.5",
+              companyHandle: "c3",
+            },
+          ],
+    });
+  })
+  test (`call test with filtering hasEquity >= 0`, async function(){
+    const resp = await request(app).get(`/jobs?hasEquity=true`);
+    expect(resp.body).toEqual(
+      {
+        jobs: [{
+          id: 3,
+          title: "job3",
+          salary: 300000,
+          equity: "0.5",
+          companyHandle: "c3",
+        }
+      ]
+      }
+    )
+  })
+  test (`call test with multiple filtering title=3 and hasEquity>=0`, async function(){
+    const resp = await request(app).get(`/jobs?title=3&hasEquity=true`);
+    expect(resp.body).toEqual(
+      {
+        jobs: [{
+          id: 3,
+          title: "job3",
+          salary: 300000,
+          equity: "0.5",
+          companyHandle: "c3",
+        }
+      ]
+      }
+    )
+  })
+  test ("fail test with filtering minSalary=-1", async function(){
+
+    let resp;
+    try {
+      resp = await request(app).get(`/jobs?minSalary=-1`);
+    } catch (err) {
+      expect(err.message).toEqual("instance.minSalary must be greater than or equal to 0");
+    }
+
+     expect(async () => {
+      await expect(request(app).get('/jobs?minSalary=-1')).rejects.toThrow(BadRequestError);
+    }).rejects.toThrow();
+
+  });
+
+
+});
+
+
 /************************************** GET /jobs/:id */
 describe("GET /jobs/:id", function () {
   test("anon allow to see the job post", async function () {
@@ -89,6 +209,7 @@ describe("GET /jobs/:id", function () {
       },
     });
   });
+  
 
   test("not found for that job", async function () {
     const resp = await request(app).get(`/jobs/0`);
