@@ -28,7 +28,7 @@ describe("create", function () {
     equity: "0",
     companyHandle: "c1"
   };
-  test("works", async function () {
+  test("works for create a job", async function () {
     let job = await Job.create(newJob);
     expect(job).toEqual(newJob);
 
@@ -115,6 +115,7 @@ describe("get", function () {
 });
 
 /************************************** update */
+//TODO: add more pessimistic tests
 describe("update", function () {
   const updateData = {
     title: "job3",

@@ -101,7 +101,7 @@ describe("GET /jobs", function () {
             title: "job3",
             salary: 300000,
             equity: "0.5",
-            companyHandle: "c3",
+            companyHandle: "c2",
           },
         ],
     });
@@ -124,7 +124,7 @@ describe("GET /jobs", function () {
     )
 
   })
-  test ("call test with filtering minSalary > 100001", async function(){
+  test ("call test with filtering minSalary >= 100000", async function(){
     const resp = await request(app).get("/jobs?minSalary=100001");
     expect(resp.body).toEqual({
      jobs:
@@ -141,13 +141,15 @@ describe("GET /jobs", function () {
               title: "job3",
               salary: 300000,
               equity: "0.5",
-              companyHandle: "c3",
+              companyHandle: "c2",cd
             },
           ],
     });
   })
-  test (`call test with filtering hasEquity >= 0`, async function(){
-    const resp = await request(app).get(`/jobs?hasEquity=true`);
+  //TODO: more pessimistic with invalid data
+
+  test (`call test with filtering hasEquity > 0`, async function(){
+    const resp = await request(app).get(`/jobs?hasEquity=1`);
     expect(resp.body).toEqual(
       {
         jobs: [{
@@ -155,14 +157,14 @@ describe("GET /jobs", function () {
           title: "job3",
           salary: 300000,
           equity: "0.5",
-          companyHandle: "c3",
+          companyHandle: "c2",
         }
       ]
       }
     )
   })
-  test (`call test with multiple filtering title=3 and hasEquity>=0`, async function(){
-    const resp = await request(app).get(`/jobs?title=3&hasEquity=true`);
+  test (`call test with multiple filtering title=3 and hasEquity>0`, async function(){
+    const resp = await request(app).get(`/jobs?title=3&hasEquity=1`);
     expect(resp.body).toEqual(
       {
         jobs: [{
@@ -170,7 +172,7 @@ describe("GET /jobs", function () {
           title: "job3",
           salary: 300000,
           equity: "0.5",
-          companyHandle: "c3",
+          companyHandle: "c2",
         }
       ]
       }
@@ -209,7 +211,7 @@ describe("GET /jobs/:id", function () {
       },
     });
   });
-  
+
 
   test("not found for that job", async function () {
     const resp = await request(app).get(`/jobs/0`);

@@ -3,9 +3,6 @@
     "$id": "http://our.company.com/jobNew.schema.json",
     "type": "object",
     "properties": {
-        "id": {
-            "type": "integer"
-        },
         "title": {
             "type": "string",
             "minLength": 1,
@@ -29,7 +26,6 @@
     },
     "additionalProperties": false,
     "required": [
-        "id",
         "title",
         "companyHandle"
     ]

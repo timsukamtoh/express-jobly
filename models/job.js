@@ -9,7 +9,7 @@ const { sqlForPartialUpdate, buildString } = require("../helpers/sql");
 class Job {
   /** Create a job (from data), update db, return new job data.
    *
-   * data should be { id, title, salary, equity, companyHandle }
+   * data should be {  title, salary, equity, companyHandle }
    *
    * Returns { id, title, salary, equity, companyHandle }
    *
@@ -17,6 +17,8 @@ class Job {
    * */
 
   static async create({ id, title, salary, equity, companyHandle }) {
+    //TODO: company check {NotFoundError}
+    //TODO: change how the duplicate check checks w/o id
     const duplicateCheck = await db.query(`
         SELECT id
         FROM jobs
@@ -26,25 +28,23 @@ class Job {
       throw new BadRequestError(`Duplicate job: ${id}`);
 
     const result = await db.query(`
-                INSERT INTO jobs (id,
-                                  title,
+                INSERT INTO jobs (title,
                                   salary,
                                   equity,
                                   company_handle)
-                VALUES ($1, $2, $3, $4, $5)
+                VALUES ($1, $2, $3, $4)
                 RETURNING
                     id,
                     title,
                     salary,
                     equity,
                     company_handle AS "companyHandle"`,
-                [
-                  id,
-                  title,
-                  salary,
-                  equity,
-                  companyHandle
-                ]);
+      [
+        title,
+        salary,
+        equity,
+        companyHandle
+      ]);
     const job = result.rows[0];
 
     return job;
@@ -59,8 +59,6 @@ class Job {
     const searchFilters = [];
     const params = [];
 
-  
-
     /**For each property, if they exist, push them into search filters and params */
     if (search.title) {
       searchFilters.push(`title ILIKE $${params.length + 1}`);
@@ -72,8 +70,8 @@ class Job {
       params.push(search.minSalary);
     }
 
-    if (search.hasEquity) {
-      searchFilters.push(`equity >= $${params.length + 1}`);
+    if (search.hasEquity === 1) {
+      searchFilters.push(`equity > $${params.length + 1}`);
       params.push(0);
     }
 
@@ -89,8 +87,8 @@ class Job {
           FROM jobs
           ${filterString}
           ORDER BY id`,
-            params
-          );
+      params
+    );
 
     return jobsResults.rows;
   }

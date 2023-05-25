@@ -38,7 +38,8 @@ async function commonBeforeAll() {
          ('2','job2','200000','0','c2'),
          ('3','job3','300000','0.5','c3')`);
 }
-
+//TODO: change to w/o insert id, and create array to pluck out ids from query after insertion
+//then export array
 async function commonBeforeEach() {
   await db.query("BEGIN");
 }

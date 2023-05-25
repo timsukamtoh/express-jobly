@@ -135,8 +135,6 @@ class Company {
   };
 
 
-
-
   /** Update company data with `data`.
    *
    * This is a "partial update" --- it's fine if data doesn't contain all the

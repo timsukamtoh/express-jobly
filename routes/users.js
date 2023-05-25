@@ -46,6 +46,8 @@ router.post("/", ensureIsAdmin, async function (req, res, next) {
 });
 
 
+
+
 /** GET / => { users: [ {username, firstName, lastName, email }, ... ] }
  *
  * Returns list of all users.
@@ -107,6 +109,9 @@ router.delete("/:username", ensureIsAdminOrCurrentUser, async function (req, res
   await User.remove(req.params.username);
   return res.json({ deleted: req.params.username });
 });
+
+
+
 
 
 module.exports = router;

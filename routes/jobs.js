@@ -7,7 +7,6 @@ const express = require("express");
 
 const { BadRequestError } = require("../expressError");
 const { ensureIsAdmin } = require("../middleware/auth");
-const Company = require("../models/company");
 const Job = require("../models/job");
 
 const jobNewSchema = require("../schemas/jobNew.json");
@@ -24,7 +23,7 @@ const router = new express.Router();
  *
  * Authorization required: login and isAdmin === true
  */
-
+//TODO: change data input
 router.post("/", ensureIsAdmin, async function (req, res, next) {
   const validator = jsonschema.validate(
     req.body,
